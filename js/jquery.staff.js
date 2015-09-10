@@ -38,7 +38,7 @@
 			).append(
 				$('<div/>').addClass('name').html(it.name)
 			).append(
-				$('<div/>').addClass('details').html(it.dept + '<br/>' + it.y_start + '-' + it.y_end)
+				$('<div/>').addClass('details').html((it.dept!=''?it.dept:it.pos) + '<br/>' + it.y_start + '-' + it.y_end)
 			).append(
 				$('<div/>').addClass('intro').html(it.name)
 			);
