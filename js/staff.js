@@ -8,11 +8,17 @@ var targets = {
 	helix: [],
 	grid: []
 };
-
+var display=false;
 $.get('php/staff.php', function(data) {
 	table = (eval(data));
 	init();
 	animate();
+});
+
+$('#container').click(function(){
+	if(!display)
+		$('#info').html('');
+	display=false;
 });
 
 function init() {
@@ -57,8 +63,8 @@ function init() {
 		object.position.x = (counts[table[i].y_start] * 140) - 800;
 		object.position.y = -((table[i].y_start - 2015) * 180);
 		targets.table.push(object);
-
 		$(element).click(function() {
+			display=true;
 			var major = $(this).children('.number')[0].innerHTML;
 			var name = $(this).children('.details')[0].innerHTML;
 			var intro = $(this).children('.intro')[0].innerHTML;
@@ -179,3 +185,4 @@ function animate() {
 function render() {
 	renderer.render(scene, camera);
 }
+
