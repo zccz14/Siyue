@@ -62,7 +62,7 @@
 			$el.click(function() {
 				display = true;
 				var it = table[$(this).children('.index').html() - 1];
-				$("#info").html(it.dept + it.pos + '-' + it.name + '<br />' + it.major + it.class);
+				$("#info").html('员工#'+it.idx+'<br/>'+it.dept + it.pos + '-' + it.name + '<br />' + it.major + it.class);
 			});
 
 		}
