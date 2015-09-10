@@ -8,53 +8,65 @@ var targets = {
 	helix: [],
 	grid: []
 };
-init();
-animate();
+
+$.get('php/staff.php', function(data) {
+	table = (eval(data));
+	init();
+	animate();
+});
 
 function init() {
+
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
-	camera.position.z = 2000;
+	camera.position.z = 1000;
 	scene = new THREE.Scene();
-	// table
+	// 表
 	for (var i = 0; i < table.length; i++) {
 		var element = document.createElement('div');
 		element.className = 'element';
-		element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
+		element.style.backgroundColor = 'rgba(0,127,127,0.75)';
 		var number = document.createElement('div');
 		number.className = 'number';
-		number.textContent = table[i][4];
+		number.textContent = table[i].major + table[i].class;
 		element.appendChild(number);
 		var symbol = document.createElement('div');
 		symbol.className = 'symbol';
-		symbol.textContent = table[i][0];
+		symbol.textContent = table[i].name;
 		element.appendChild(symbol);
-		
+
 		var details = document.createElement('div');
 		details.className = 'details';
-		details.innerHTML = table[i][1] + '<br>' + table[i][2];
+		details.innerHTML = table[i].dept + '<br/>' + table[i].y_start + '-' + table[i].y_end;
 		element.appendChild(details);
-		
+
 		var intro = document.createElement("div");
-		intro.className='intro';
-		intro.innerHTML=table[i][5];
+		intro.className = 'intro';
+		intro.innerHTML = table[i].name;
 		element.appendChild(intro);
-		
-		
+
 		var object = new THREE.CSS3DObject(element);
 		object.position.x = Math.random() * 4000 - 2000;
 		object.position.y = Math.random() * 4000 - 2000;
 		object.position.z = Math.random() * 4000 - 2000;
 		scene.add(object);
 		objects.push(object);
-		if (counts[table[i][3]] == undefined) counts[table[i][3]] = 0;
-		counts[table[i][3]] ++;
+		if (counts[table[i].y_start] == undefined) counts[table[i].y_start] = 0;
+		counts[table[i].y_start] ++;
 		//
 		var object = new THREE.Object3D();
-		object.position.x = (counts[table[i][3]] * 140) - 800;
-		object.position.y = -(table[i][3] * 180) + 990;
+		object.position.x = (counts[table[i].y_start] * 140) - 800;
+		object.position.y = -((table[i].y_start - 2015) * 180);
 		targets.table.push(object);
+
+		$(element).click(function() {
+			var major = $(this).children('.number')[0].innerHTML;
+			var name = $(this).children('.details')[0].innerHTML;
+			var intro = $(this).children('.intro')[0].innerHTML;
+			$("#info").html(name + '<br />' + major + '<br/>' + intro);
+		});
+
 	}
-	// sphere
+	// 球面
 	var vector = new THREE.Vector3();
 	for (var i = 0, l = objects.length; i < l; i++) {
 		var phi = Math.acos(-1 + (2 * i) / l);
@@ -67,7 +79,7 @@ function init() {
 		object.lookAt(vector);
 		targets.sphere.push(object);
 	}
-	// helix
+	// 螺旋面
 	var vector = new THREE.Vector3();
 	for (var i = 0, l = objects.length; i < l; i++) {
 		var phi = i * 0.175 + Math.PI;
@@ -81,7 +93,7 @@ function init() {
 		object.lookAt(vector);
 		targets.helix.push(object);
 	}
-	// grid
+	// 网格
 	for (var i = 0; i < objects.length; i++) {
 		var object = new THREE.Object3D();
 		object.position.x = ((i % 5) * 400) - 800;
@@ -92,8 +104,8 @@ function init() {
 	//
 	renderer = new THREE.CSS3DRenderer();
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	renderer.domElement.style.position = 'absolute';
-	document.getElementById('container').appendChild(renderer.domElement);
+	$(renderer.domElement).css('position', 'absolute');
+	$('#container').append(renderer.domElement);
 	//控制器
 	controls = new THREE.TrackballControls(camera, renderer.domElement);
 	controls.rotateSpeed = 1;
@@ -120,6 +132,7 @@ function init() {
 	transform(targets.table, 2000);
 	//
 	window.addEventListener('resize', onWindowResize, false);
+
 }
 
 function transform(targets, duration) {
@@ -166,11 +179,3 @@ function animate() {
 function render() {
 	renderer.render(scene, camera);
 }
-
-$('div.element').click(function(){
-	var major = $(this).children('.number')[0].innerHTML;
-	var name = $(this).children('.details')[0].innerHTML;
-	var intro = $(this).children('.intro')[0].innerHTML;
-	$("#info").html(name+'<br />'+major+'<br/>'+intro);
-});
-
